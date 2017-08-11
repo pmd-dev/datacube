@@ -229,6 +229,7 @@
       <groupId>org.apache.hbase</groupId>
       <artifactId>hbase</artifactId>
       <version>${hbaseVersion}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
