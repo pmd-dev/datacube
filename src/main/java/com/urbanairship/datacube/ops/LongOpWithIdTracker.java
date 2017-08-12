@@ -5,6 +5,7 @@ import com.urbanairship.datacube.Deserializer;
 import com.urbanairship.datacube.Op;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -66,18 +67,29 @@ public class LongOpWithIdTracker extends LongOp
 		return buffer.array();
 	}
 
-	public static class LongOpWithIdTrackerDeserializer implements Deserializer<LongOp>
+	public static class LongOpWithIdTrackerDeserializer implements Deserializer<LongOpWithIdTracker>
 	{
 		@Override
-		public LongOp fromBytes(byte[] bytes)
+		public LongOpWithIdTracker fromBytes(byte[] bytes)
 		{
+			int length = bytes.length;
+			if(length < 8)
+			{
+				throw new IllegalArgumentException("Input array was too small: " + Arrays.toString(bytes));
+			}
+
 			ByteBuffer buffer = ByteBuffer.wrap(bytes);
 			long val = buffer.getLong();
-			long size = buffer.getLong();
+
+			// Backwards compatibility with maps written out with LongOp and being read back in as LongOpWithIdTracker
 			Set<Long> ids = new HashSet<Long>();
-			for (int i=0; i<size; i++)
+			if (length > 8)
 			{
-				ids.add(buffer.getLong());
+				long size = buffer.getLong();
+				for (int i = 0; i < size; i++)
+				{
+					ids.add(buffer.getLong());
+				}
 			}
 
 			return new LongOpWithIdTracker(val, ids);
