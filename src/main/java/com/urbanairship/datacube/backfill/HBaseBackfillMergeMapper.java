@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.HTable;
@@ -86,8 +85,8 @@ public class HBaseBackfillMergeMapper extends Mapper<Scan,NullWritable,NullWrita
                 case OVERWRITE:
                     byte[] serializedBytes = actionRowKeyAndOp.op.serialize();
                     if(log.isDebugEnabled()) {
-                        log.debug("Putting new value " + Hex.encodeHexString(serializedBytes) + " at row " +
-                                Hex.encodeHexString(actionRowKeyAndOp.rowKey));
+//                        log.debug("Putting new value " + Hex.encodeHexString(serializedBytes) + " at row " +
+//                                Hex.encodeHexString(actionRowKeyAndOp.rowKey));
                     }
                     Put put = new Put(actionRowKeyAndOp.rowKey);
                     put.add(cf, HBaseDbHarness.QUALIFIER, serializedBytes);
@@ -96,7 +95,7 @@ public class HBaseBackfillMergeMapper extends Mapper<Scan,NullWritable,NullWrita
                     break;
                 case DELETE:
                     if(log.isDebugEnabled()) {
-                        log.debug("Deleting row " + Hex.encodeHexString(actionRowKeyAndOp.rowKey));
+//                        log.debug("Deleting row " + Hex.encodeHexString(actionRowKeyAndOp.rowKey));
                     }
                     Delete delete = new Delete(actionRowKeyAndOp.rowKey);
                     liveCubeHTable.delete(delete);

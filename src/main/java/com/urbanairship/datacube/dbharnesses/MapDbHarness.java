@@ -4,6 +4,19 @@ Copyright 2012 Urban Airship and Contributors
 
 package com.urbanairship.datacube.dbharnesses;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import org.apache.commons.lang.NotImplementedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Optional;
 import com.urbanairship.datacube.Address;
 import com.urbanairship.datacube.Batch;
@@ -12,20 +25,6 @@ import com.urbanairship.datacube.DbHarness;
 import com.urbanairship.datacube.Deserializer;
 import com.urbanairship.datacube.IdService;
 import com.urbanairship.datacube.Op;
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang.NotImplementedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * For testing, this is is a backing store for a cube that lives in memory. It saves us from 
@@ -60,7 +59,7 @@ public class MapDbHarness<T extends Op> implements DbHarness<T> {
     @SuppressWarnings("unchecked")
     @Override
     public Future<?> runBatchAsync(Batch<T> batch, AfterExecute<T> afterExecute) {
-        
+
         for(Map.Entry<Address,T> entry: batch.getMap().entrySet()) {
             Address address = entry.getKey();
             T opFromBatch = entry.getValue();
@@ -87,8 +86,8 @@ public class MapDbHarness<T extends Op> implements DbHarness<T> {
                         T oldOp = deserializer.fromBytes(oldBytes.get());
                         newOp = (T)opFromBatch.add(oldOp);
                         if(log.isDebugEnabled()) {
-                            log.debug("Combined " + oldOp + " and " +  opFromBatch + " into " +
-                                    newOp);
+//                            log.debug("Combined " + oldOp + " and " +  opFromBatch + " into " +
+//                                    newOp);
                         }
                     } else {
                         newOp = opFromBatch;
@@ -98,9 +97,9 @@ public class MapDbHarness<T extends Op> implements DbHarness<T> {
                         // Compare and swap, if the key is still mapped to the same byte array.
                         if(map.replace(mapKey, oldBytes.get(), newOp.serialize())) {
                             if(log.isDebugEnabled()) {
-                                log.debug("Successful CAS overwrite at key " + 
-                                        Hex.encodeHexString(mapKey.bytes)  + " with " + 
-                                        Hex.encodeHexString(newOp.serialize()));
+//                                log.debug("Successful CAS overwrite at key " +
+//                                        Hex.encodeHexString(mapKey.bytes)  + " with " +
+//                                        Hex.encodeHexString(newOp.serialize()));
                             }
                             break;
                         }
@@ -110,9 +109,9 @@ public class MapDbHarness<T extends Op> implements DbHarness<T> {
                             // null is returned when there was no existing mapping for the 
                             // given key, which is the success case.
                             if(log.isDebugEnabled()) {
-                                log.debug("Successful CAS insert without existing key for key " + 
-                                        Hex.encodeHexString(mapKey.bytes) + " with " + 
-                                        Hex.encodeHexString(newOp.serialize()));
+//                                log.debug("Successful CAS insert without existing key for key " +
+//                                        Hex.encodeHexString(mapKey.bytes) + " with " +
+//                                        Hex.encodeHexString(newOp.serialize()));
                             }
                             break;
                         }
@@ -126,7 +125,7 @@ public class MapDbHarness<T extends Op> implements DbHarness<T> {
             } else if(commitType == CommitType.OVERWRITE) {
                 map.put(mapKey, opFromBatch.serialize());
                 if(log.isDebugEnabled()) {
-                    log.debug("Write of key " + Hex.encodeHexString(mapKey.bytes));
+//                    log.debug("Write of key " + Hex.encodeHexString(mapKey.bytes));
                 }
             } else {
                 throw new AssertionError("Unsupported commit type: " + commitType);
@@ -158,7 +157,7 @@ public class MapDbHarness<T extends Op> implements DbHarness<T> {
 
         map.put(mapKey, op.serialize());
         if(log.isDebugEnabled()) {
-            log.debug("Set of key " + Hex.encodeHexString(mapKey.bytes));
+//            log.debug("Set of key " + Hex.encodeHexString(mapKey.bytes));
         }
     }
 
@@ -181,8 +180,8 @@ public class MapDbHarness<T extends Op> implements DbHarness<T> {
         }
         byte[] bytes = map.get(new BoxedByteArray(mapKey));
         if(log.isDebugEnabled()) {
-            log.debug("getRaw for key " + Hex.encodeHexString(mapKey) + " returned " + 
-                    Arrays.toString(bytes));
+//            log.debug("getRaw for key " + Hex.encodeHexString(mapKey) + " returned " +
+//                    Arrays.toString(bytes));
         }
         if(bytes == null) {
             return Optional.absent();

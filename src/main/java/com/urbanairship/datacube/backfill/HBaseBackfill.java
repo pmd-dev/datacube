@@ -116,7 +116,7 @@ public class HBaseBackfill implements Runnable {
                 return false;
             }
             
-            log.debug("Backfill complete");
+//            log.debug("Backfill complete");
             return true;
         } finally {
             if(liveCubeTable != null) {

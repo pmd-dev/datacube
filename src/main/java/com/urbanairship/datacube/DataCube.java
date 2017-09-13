@@ -4,21 +4,22 @@ Copyright 2012 Urban Airship and Contributors
 
 package com.urbanairship.datacube;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.SetMultimap;
-import com.google.common.collect.Sets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
 
 /**
  * A hypercube abstraction for storing number-like data. Good for storing counts of events
@@ -117,7 +118,7 @@ public class DataCube<T extends Op> {
 
             if(dimensionHadNoBucket) {
                 // Skip this rollup since one of its input buckets was not present.
-                log.debug("Skipping rollup due to dimension with no buckets");
+//                log.debug("Skipping rollup due to dimension with no buckets");
                 continue;
             }
             

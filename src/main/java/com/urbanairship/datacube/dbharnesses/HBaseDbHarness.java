@@ -4,6 +4,29 @@ Copyright 2012 Urban Airship and Contributors
 
 package com.urbanairship.datacube.dbharnesses;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.client.HTablePool;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.util.Bytes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
@@ -21,29 +44,6 @@ import com.yammer.metrics.core.Counter;
 import com.yammer.metrics.core.Gauge;
 import com.yammer.metrics.core.Histogram;
 import com.yammer.metrics.core.Timer;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.HTablePool;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.util.Bytes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 public class HBaseDbHarness<T extends Op> implements DbHarness<T> {
 
@@ -157,15 +157,15 @@ public class HBaseDbHarness<T extends Op> implements DbHarness<T> {
         Result result = WithHTable.get(pool, tableName, get);
         if (result == null || result.isEmpty()) {
             if (log.isDebugEnabled()) {
-                log.debug("Returning absent for cube:" + Arrays.toString(uniqueCubeName) +
-                        " for address:" + c + " key " + Base64.encodeBase64String(rowKey));
+//                log.debug("Returning absent for cube:" + Arrays.toString(uniqueCubeName) +
+//                        " for address:" + c + " key " + Base64.encodeBase64String(rowKey));
             }
             return Optional.absent();
         } else {
             T deserialized = deserializer.fromBytes(result.value());
             if (log.isDebugEnabled()) {
-                log.debug("Returning value for cube:" + Arrays.toString(uniqueCubeName) + " address:" +
-                        c + ": " + " key " + Base64.encodeBase64String(rowKey) + ": " + deserialized);
+//                log.debug("Returning value for cube:" + Arrays.toString(uniqueCubeName) + " address:" +
+//                        c + ": " + " key " + Base64.encodeBase64String(rowKey) + ": " + deserialized);
             }
             return Optional.of(deserialized);
         }
@@ -291,7 +291,7 @@ public class HBaseDbHarness<T extends Op> implements DbHarness<T> {
         put.add(cf, QUALIFIER, op.serialize());
         WithHTable.put(pool, tableName, put);
         if (log.isDebugEnabled()) {
-            log.debug("Set of key " + Base64.encodeBase64String(rowKey));
+//            log.debug("Set of key " + Base64.encodeBase64String(rowKey));
         }
     }
 
@@ -331,8 +331,8 @@ public class HBaseDbHarness<T extends Op> implements DbHarness<T> {
                 singleWriteTimer.update(writeDurationNanos, TimeUnit.NANOSECONDS);
 
                 if (log.isDebugEnabled()) {
-                    log.debug("Succesfully wrote cube:" + Arrays.toString(uniqueCubeName) +
-                            " address:" + address);
+//                    log.debug("Succesfully wrote cube:" + Arrays.toString(uniqueCubeName) +
+//                            " address:" + address);
                 }
                 successfulAddresses.add(address);
                 successfulRows.put(rowKey, dbBytes);

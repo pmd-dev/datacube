@@ -1,16 +1,12 @@
 package com.urbanairship.datacube.idservicecompat;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.math.LongMath;
-import com.urbanairship.datacube.IdService;
-import com.urbanairship.datacube.Util;
-import com.urbanairship.datacube.dbharnesses.WithHTable;
-import com.urbanairship.datacube.dbharnesses.WithHTable.ScanRunnable;
-import com.urbanairship.datacube.idservices.HBaseIdService;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map.Entry;
+
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -24,11 +20,15 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map.Entry;
+import com.google.common.base.Optional;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.math.LongMath;
+import com.urbanairship.datacube.IdService;
+import com.urbanairship.datacube.Util;
+import com.urbanairship.datacube.dbharnesses.WithHTable;
+import com.urbanairship.datacube.dbharnesses.WithHTable.ScanRunnable;
+import com.urbanairship.datacube.idservices.HBaseIdService;
 
 /**
  * This class is copied from DataCube v1.3.0, and exists here to verify that
@@ -97,13 +97,13 @@ public class OldHBaseIdService implements IdService {
                 int statusOrdinal = columnVal[0];
                 Status status = Status.values()[statusOrdinal];
                 if (log.isDebugEnabled()) {
-                    log.debug("Entry status is " + status);
+//                    log.debug("Entry status is " + status);
                 }
                 switch (status) {
                     case ALLOCATED:
                         byte[] id = Util.trailingBytes(columnVal, numIdBytes);
                         if (log.isDebugEnabled()) {
-                            log.debug("Already allocated, returning " + Hex.encodeHexString(id));
+//                            log.debug("Already allocated, returning " + Hex.encodeHexString(id));
                         }
                         return id;
                     case ALLOCATING:
@@ -113,7 +113,7 @@ public class OldHBaseIdService implements IdService {
                         if (msSinceAlloc < ALLOC_TIMEOUT_MS) {
                             // Another thread is already allocating an id for this tag. Wait.
                             if (log.isDebugEnabled()) {
-                                log.debug("Waiting for other thread to finish allocating id");
+//                                log.debug("Waiting for other thread to finish allocating id");
                             }
                             Thread.sleep(500);
                             continue;
@@ -140,12 +140,12 @@ public class OldHBaseIdService implements IdService {
                     QUALIFIER, columnVal, put);
             if (swapSuccess) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Allocation record CAS success");
+//                    log.debug("Allocation record CAS success");
                 }
                 break;
             }
             if (log.isDebugEnabled()) {
-                log.debug("Allocation record CAS failed, retrying");
+//                log.debug("Allocation record CAS failed, retrying");
             }
 
         }
@@ -163,7 +163,7 @@ public class OldHBaseIdService implements IdService {
         byte[] counterKey = makeCounterKey(dimensionNum);
         final long id = WithHTable.increment(pool, counterTable, counterKey, cf, QUALIFIER, 1L);
         if (log.isDebugEnabled()) {
-            log.debug("Allocated new id " + id);
+//            log.debug("Allocated new id " + id);
         }
 
         final long maxId = LongMath.pow(2L, numIdBytes * 8);
@@ -230,7 +230,7 @@ public class OldHBaseIdService implements IdService {
                         log.error("Saw a dupe: dimension=" + dimensionNum + " id=" + id);
                         anyInconsistenciesFound = true;
                     } else {
-                        log.debug("New value, dimension=" + dimensionNum + " id=" + id);
+//                        log.debug("New value, dimension=" + dimensionNum + " id=" + id);
                         sawIds.put(dimensionNum, id);
                     }
                 }

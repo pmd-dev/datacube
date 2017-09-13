@@ -129,13 +129,13 @@ public class HBaseSnapshotter implements Runnable {
             job.getConfiguration().set("mapred.map.tasks.speculative.execution", "false");
             job.getConfiguration().set("mapred.reduce.tasks.speculative.execution", "false");
             
-            log.debug("Starting HBase mapreduce snapshotter");
+//            log.debug("Starting HBase mapreduce snapshotter");
             if(!job.waitForCompletion(true)) {
                 log.error("Job return false, mapreduce must have failed");
                 return false;
             }
 
-            log.debug("Starting HBase bulkloader to load snapshot from HFiles");
+//            log.debug("Starting HBase bulkloader to load snapshot from HFiles");
             try {
             	new LoadIncrementalHFiles(conf).doBulkLoad(hfileOutputPath, destHTable);
             } catch (Exception e) {

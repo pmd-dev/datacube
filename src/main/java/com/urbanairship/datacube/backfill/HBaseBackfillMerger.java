@@ -9,15 +9,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.common.io.Closeables;
-
-import org.apache.hadoop.hbase.client.ResultScanner;
-
-import org.apache.hadoop.fs.Path;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.util.Pair;
@@ -116,7 +112,7 @@ public class HBaseBackfillMerger implements Runnable {
                 // as input splits.
                 
                 if(log.isDebugEnabled()) {
-                    log.debug("Scans: " + scans);
+//                    log.debug("Scans: " + scans);
                 }
                 CollectionInputFormat.setCollection(job, Scan.class, scans);
                 

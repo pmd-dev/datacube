@@ -12,11 +12,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Lists;
 import com.urbanairship.datacube.dbharnesses.AfterExecute;
 import com.urbanairship.datacube.dbharnesses.FullQueueException;
 import com.yammer.metrics.Metrics;
@@ -222,7 +222,7 @@ public class DataCubeIo<T extends Op> {
                 asyncQueueBackoffMeter.mark();
                 
                 // Sleeping and retrying like this means batches may be flushed out of order
-                log.debug("Async queue is full, retrying soon");
+//                log.debug("Async queue is full, retrying soon");
                 Thread.sleep(100);
             }
         }

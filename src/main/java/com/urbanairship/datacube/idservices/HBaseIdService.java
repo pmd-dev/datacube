@@ -4,6 +4,27 @@ Copyright 2012 Urban Airship and Contributors
 
 package com.urbanairship.datacube.idservices;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.client.HTablePool;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.ResultScanner;
+import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.util.Bytes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -18,27 +39,6 @@ import com.yammer.metrics.core.Gauge;
 import com.yammer.metrics.core.Meter;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.core.TimerContext;
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.HTablePool;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.ResultScanner;
-import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.util.Bytes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 public class HBaseIdService implements IdService {
     private static final Logger log = LoggerFactory.getLogger(HBaseIdService.class);
@@ -112,7 +112,7 @@ public class HBaseIdService implements IdService {
         final long id = WithHTable.increment(pool, counterTable, counterKey, cf, QUALIFIER, 1L);
 
         if (log.isDebugEnabled()) {
-            log.debug("Allocated new id " + id);
+//            log.debug("Allocated new id " + id);
         }
 
         final long maxId = LongMath.pow(2L, numIdBytes * 8);
@@ -170,7 +170,7 @@ public class HBaseIdService implements IdService {
                 Status status = Status.values()[statusOrdinal];
 
                 if (log.isDebugEnabled()) {
-                    log.debug("Entry status is " + status);
+//                    log.debug("Entry status is " + status);
                 }
 
                 switch (status) {
@@ -178,7 +178,7 @@ public class HBaseIdService implements IdService {
                         byte[] id = Util.trailingBytes(columnVal, numIdBytes);
 
                         if (log.isDebugEnabled()) {
-                            log.debug("Already allocated, returning " + Hex.encodeHexString(id));
+//                            log.debug("Already allocated, returning " + Hex.encodeHexString(id));
                         }
 
                         timer.stop();
@@ -228,7 +228,7 @@ public class HBaseIdService implements IdService {
                         log.error("Saw a dupe: dimension=" + dimensionNum + " id=" + id);
                         anyInconsistenciesFound = true;
                     } else {
-                        log.debug("New value, dimension=" + dimensionNum + " id=" + id);
+//                        log.debug("New value, dimension=" + dimensionNum + " id=" + id);
                         sawIds.put(dimensionNum, id);
                     }
                 }

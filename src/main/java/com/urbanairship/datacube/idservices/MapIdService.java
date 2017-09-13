@@ -4,18 +4,18 @@ Copyright 2012 Urban Airship and Contributors
 
 package com.urbanairship.datacube.idservices;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import com.urbanairship.datacube.BoxedByteArray;
 import com.urbanairship.datacube.IdService;
 import com.urbanairship.datacube.Util;
-import org.apache.commons.codec.binary.Hex;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
 
 /**
  * An implementation of IdService that's backed by an in-memory map instead of a database.
@@ -37,7 +37,7 @@ public class MapIdService implements IdService {
         if (idMapForDimension == null) {
             // This is the first request for this dimension. Create a new map for the dimension.
             if (log.isDebugEnabled()) {
-                log.debug("Creating new id map for dimension " + dimensionNum);
+//                log.debug("Creating new id map for dimension " + dimensionNum);
             }
             idMapForDimension = Maps.newHashMap();
             idMap.put(dimensionNum, idMapForDimension);
@@ -68,8 +68,8 @@ public class MapIdService implements IdService {
         assert idBytesTruncated.length == numBytes;
 
         if (log.isDebugEnabled()) {
-            log.debug("Returning unique ID " + Hex.encodeHexString(idBytesTruncated) +
-                    " for dimension " + dimensionNum + " input " + Hex.encodeHexString(bytes));
+//            log.debug("Returning unique ID " + Hex.encodeHexString(idBytesTruncated) +
+//                    " for dimension " + dimensionNum + " input " + Hex.encodeHexString(bytes));
         }
         return idBytesTruncated;
     }
