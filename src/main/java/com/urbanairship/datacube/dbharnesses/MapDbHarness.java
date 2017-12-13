@@ -195,7 +195,7 @@ public class MapDbHarness<T extends Op> implements DbHarness<T> {
         throw new NotImplementedException();
     }
     
-    private static class NullFuture implements Future<Object> {
+    public static class NullFuture implements Future<Object> {
         @Override
         public boolean cancel(boolean mayInterruptIfRunning) {
             return false;
