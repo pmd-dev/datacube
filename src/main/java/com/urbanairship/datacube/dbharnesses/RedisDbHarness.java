@@ -82,16 +82,7 @@ public class RedisDbHarness<T extends Op> implements DbHarness<T>
 				set(redisKey, opFromBatch);
 			}
 			else if (commitType == CommitType.INCREMENT) {
-				long amount = Util.bytesToLong(opFromBatch.serialize());
-
-//				jedis.incrBy(redisKey, amount);
-
-				// TODO - see if there is a creative way to do this on all unique keys at the end - this slows us down by 20-30%
-				// TODO - also need to check if ttl value is set, if not, just to incrBy, like we do for set
-				Transaction trans = jedis.multi();
-				trans.incrBy(redisKey, amount);
-				trans.expire(redisKey, ttlSeconds);
-				trans.exec();
+				increment(redisKey, opFromBatch);
 			}
 			else {
 				throw new AssertionError("Unsupported commit type: " + commitType);
@@ -136,6 +127,23 @@ public class RedisDbHarness<T extends Op> implements DbHarness<T>
 		else
 		{
 			jedis.set(redisKey, op.serialize());
+		}
+	}
+
+	private void increment(byte[] redisKey, T op)
+	{
+		long amount = Util.bytesToLong(op.serialize());
+
+		if (ttlSeconds > 0)
+		{
+			Transaction trans = jedis.multi();
+			trans.incrBy(redisKey, amount);
+			trans.expire(redisKey, ttlSeconds);
+			trans.exec();
+		}
+		else
+		{
+			jedis.incrBy(redisKey, amount);
 		}
 	}
 
