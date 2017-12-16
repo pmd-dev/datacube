@@ -24,11 +24,11 @@ public class RedisDbHarness<T extends Op> implements DbHarness<T>
 {
 	private static final Future<?> nullFuture = new MapDbHarness.NullFuture();
 
-	private final Jedis jedis;
-	private final int ttlSeconds;
-	private final Deserializer<T> deserializer;
-	private final CommitType commitType;
-	private final IdService idService;
+	protected final Jedis jedis;
+	protected final int ttlSeconds;
+	protected final Deserializer<T> deserializer;
+	protected final CommitType commitType;
+	protected final IdService idService;
 
 	public RedisDbHarness(Jedis jedis, int ttlSeconds, Deserializer<T> deserializer,
 	                      CommitType commitType, IdService idService)
@@ -157,7 +157,7 @@ public class RedisDbHarness<T extends Op> implements DbHarness<T>
 		return; // all ops are synchronously applied, nothing to do
 	}
 
-	private Optional<byte[]> getRaw(Address address) throws InterruptedException {
+	protected Optional<byte[]> getRaw(Address address) throws InterruptedException {
 		byte[] redisKey;
 		try {
 			final Optional<byte[]> maybeKey = address.toReadKey(idService);
