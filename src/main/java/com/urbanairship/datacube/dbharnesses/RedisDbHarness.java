@@ -14,8 +14,10 @@ import com.urbanairship.datacube.DbHarness;
 import com.urbanairship.datacube.Deserializer;
 import com.urbanairship.datacube.IdService;
 import com.urbanairship.datacube.Op;
+import com.urbanairship.datacube.Util;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Transaction;
 
 
 public class RedisDbHarness<T extends Op> implements DbHarness<T>
@@ -78,6 +80,18 @@ public class RedisDbHarness<T extends Op> implements DbHarness<T>
 			}
 			else if(commitType == CommitType.OVERWRITE) {
 				set(redisKey, opFromBatch);
+			}
+			else if (commitType == CommitType.INCREMENT) {
+				long amount = Util.bytesToLong(opFromBatch.serialize());
+
+//				jedis.incrBy(redisKey, amount);
+
+				// TODO - see if there is a creative way to do this on all unique keys at the end - this slows us down by 20-30%
+				// TODO - also need to check if ttl value is set, if not, just to incrBy, like we do for set
+				Transaction trans = jedis.multi();
+				trans.incrBy(redisKey, amount);
+				trans.expire(redisKey, ttlSeconds);
+				trans.exec();
 			}
 			else {
 				throw new AssertionError("Unsupported commit type: " + commitType);
